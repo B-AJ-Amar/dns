@@ -51,10 +51,25 @@ typedef struct dns_rr {
 typedef struct {
     dns_header header;
 
-    dns_question *questions;   // [qdcount]
-    dns_rr       *answers;     // [ancount]
-    dns_rr       *authorities; // [nscount]
-    dns_rr       *additionals; // [arcount]
+    dns_question **questions;   // [qdcount]
+    dns_rr       **answers;     // [ancount]
+    dns_rr       **authorities; // [nscount]
+    dns_rr       **additionals; // [arcount]
 } dns_message;
+
+
+
+__uint8_t get_flag_qr(__uint16_t flags);
+__uint8_t get_flag_opcode(__uint16_t flags);
+__uint8_t get_flag_aa(__uint16_t flags);
+__uint8_t get_flag_tc(__uint16_t flags);
+__uint8_t get_flag_rd(__uint16_t flags);
+__uint8_t get_flag_ra(__uint16_t flags);
+__uint8_t get_flag_z(__uint16_t flags);
+__uint8_t get_flag_rcode(__uint16_t flags);
+
+dns_question* parse_dns_question(char* buffer,size_t len);
+dns_rr* parse_dns_rr(char* buffer,size_t len);
+dns_message* parse_dns_message(char* buffer,size_t len);
 
 #endif // DNS_H

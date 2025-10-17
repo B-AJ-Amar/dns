@@ -27,5 +27,10 @@ extern logger lg;
 
 int  init_logger(logger *lg, log_level level, int use_colors, char *time_format, FILE *output);
 void log_message(log_level level, const char *fmt, ...);
-
+void log_trace(const char *fmt, ...);
+void log_debug(const char *fmt, ...);
+void log_info(const char *fmt, ...);
+void log_warn(const char *fmt, ...);
+void log_error(const char *fmt, ...);
+void log_fatal(const char *fmt, ...);
 #endif // LOGGER_H
