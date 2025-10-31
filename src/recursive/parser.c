@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// for this version i will ignore ttl i will just use the named.root that i download manually
 named_root_file *parse_named_root_file(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
@@ -44,3 +45,11 @@ named_root_file *parse_named_root_file(const char *filename) {
         fclose(file);
         return nrf;
     }
+}
+
+void free_named_root_file(named_root_file *nrf) {
+    if (nrf != NULL) {
+        free(nrf);
+    }
+}
+
