@@ -69,5 +69,6 @@ __uint8_t get_flag_rcode(__uint16_t flags);
 dns_question *parse_dns_question(char *buffer, size_t len);
 dns_rr       *parse_dns_rr(char *buffer, size_t len);
 dns_message  *parse_dns_message(char *buffer, size_t len);
+// __uint8_t    *serialize_dns_message(dns_message *message); // ? we may need it later
 
 #endif // DNS_H

@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "recursive/parser.h"
 #include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,8 @@ named_root_file *parse_named_root_file(const char *filename) {
         if (strstr(line, "NS")) {
             server_index++;
             if (sscanf(line, "%*s %*s %*s NS %255s", ns) == 1) {
-                strncpy(nrf->root_servers[server_index].ns, ns, sizeof(nrf->root_servers[server_index].ns) - 1);
+                strncpy(nrf->root_servers[server_index].ns, ns,
+                        sizeof(nrf->root_servers[server_index].ns) - 1);
             }
         } else if (strstr(line, "AAAA")) {
             if (sscanf(line, "%*s %*s %*s AAAA %s", ipv6_str) == 1) {
@@ -52,4 +53,3 @@ void free_named_root_file(named_root_file *nrf) {
         free(nrf);
     }
 }
-
