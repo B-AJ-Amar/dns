@@ -23,6 +23,16 @@
 #define DNS_Z_SHIFT      4
 #define DNS_RCODE_SHIFT  0
 
+const enum DNS_RCODE {
+    DNS_RCODE_NO_ERROR        = 0,
+    DNS_RCODE_FORMAT_ERROR    = 1,
+    DNS_RCODE_SERVER_FAILURE  = 2,
+    DNS_RCODE_NAME_ERROR      = 3,
+    DNS_RCODE_NOT_IMPLEMENTED = 4,
+    DNS_RCODE_REFUSED         = 5,
+
+};
+
 typedef struct dns_header {
     __uint16_t id;
     __uint16_t flags;
@@ -69,6 +79,6 @@ __uint8_t get_flag_rcode(__uint16_t flags);
 dns_question *parse_dns_question(char *buffer, size_t len);
 dns_rr       *parse_dns_rr(char *buffer, size_t len);
 dns_message  *parse_dns_message(char *buffer, size_t len);
-// __uint8_t    *serialize_dns_message(dns_message *message); // ? we may need it later
+uint8_t      *deserialize_dns_message(dns_message *message);
 
 #endif // DNS_H

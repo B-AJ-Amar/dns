@@ -55,3 +55,22 @@ int send_udp_packet(int sockfd, const char *buffer, size_t buffer_size,
     }
     return n;
 }
+
+int send_dns_message(int sockfd, dns_message *message, struct sockaddr_in *client_addr,
+                     socklen_t addr_len) {
+
+    __uint8_t *msg = deserialize_dns_message(message);
+
+    if (msg == NULL) {
+        log_error("failed to deserialize DNS message\n");
+        return RET_FAILURE;
+    }
+
+    int n = sendto(sockfd, msg, sizeof(msg), 0, (struct sockaddr *)client_addr, addr_len);
+    if (n < 0) {
+        log_error("failed to send DNS message\n");
+        return RET_FAILURE;
+    }
+
+    return n;
+}

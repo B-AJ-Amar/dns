@@ -14,7 +14,6 @@ pthread_t *init_thread_pool(int num_threads, task_queue *queue) {
     pthread_mutex_init(&mutex_queue, NULL);
     sem_init(&sem_queue, 0, 0);
 
-
     if (queue == NULL)
         queue = create_task_queue();
 
@@ -56,7 +55,6 @@ int destroy_thread_pool(int num_threads, pthread_t *threads) {
 void *start_thread(void *args) {
     thread_args *thread_data = (thread_args *)args;
     task_queue  *queue       = thread_data->queue;
-
 
     while (1) {
         sem_wait(&sem_queue);

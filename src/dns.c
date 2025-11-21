@@ -127,3 +127,90 @@ dns_message *parse_dns_message(char *buffer, size_t len) {
 
     return message;
 }
+
+__uint8_t *deserialize_dns_message(dns_message *message) {
+    __uint8_t *raw_data = calloc(4096, sizeof(__uint8_t));
+    if (!raw_data) {
+        log_fatal("failed to allocate memory for DNS message serialization\n");
+    }
+    size_t cursor = 0;
+    memcpy(raw_data + cursor, &message->header, sizeof(dns_header));
+    cursor += sizeof(dns_header);
+    for (int i = 0; i < message->header.qdcount; i++) {
+        dns_question *question  = message->questions[i];
+        size_t        qname_len = strlen(question->qname) + 1;
+        memcpy(raw_data + cursor, question->qname, qname_len);
+        cursor += qname_len;
+        __uint16_t qtype_net  = htons(question->qtype);
+        __uint16_t qclass_net = htons(question->qclass);
+        memcpy(raw_data + cursor, &qtype_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &qclass_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+    }
+
+    for (int i = 0; i < message->header.ancount; i++) {
+        dns_rr *rr       = message->answers[i];
+        size_t  name_len = strlen(rr->name) + 1;
+        memcpy(raw_data + cursor, rr->name, name_len);
+        cursor += name_len;
+        __uint16_t type_net     = htons(rr->type);
+        __uint16_t rclass_net   = htons(rr->rclass);
+        __uint32_t ttl_net      = htonl(rr->ttl);
+        __uint16_t rdlength_net = htons(rr->rdlength);
+        memcpy(raw_data + cursor, &type_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &rclass_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &ttl_net, sizeof(__uint32_t));
+        cursor += sizeof(__uint32_t);
+        memcpy(raw_data + cursor, &rdlength_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, rr->rdata, rr->rdlength);
+        cursor += rr->rdlength;
+    }
+
+    for (int i = 0; i < message->header.nscount; i++) {
+        dns_rr *rr       = message->authorities[i];
+        size_t  name_len = strlen(rr->name) + 1;
+        memcpy(raw_data + cursor, rr->name, name_len);
+        cursor += name_len;
+        __uint16_t type_net     = htons(rr->type);
+        __uint16_t rclass_net   = htons(rr->rclass);
+        __uint32_t ttl_net      = htonl(rr->ttl);
+        __uint16_t rdlength_net = htons(rr->rdlength);
+        memcpy(raw_data + cursor, &type_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &rclass_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &ttl_net, sizeof(__uint32_t));
+        cursor += sizeof(__uint32_t);
+        memcpy(raw_data + cursor, &rdlength_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, rr->rdata, rr->rdlength);
+        cursor += rr->rdlength;
+    }
+
+    for (int i = 0; i < message->header.arcount; i++) {
+        dns_rr *rr       = message->additionals[i];
+        size_t  name_len = strlen(rr->name) + 1;
+        memcpy(raw_data + cursor, rr->name, name_len);
+        cursor += name_len;
+        __uint16_t type_net     = htons(rr->type);
+        __uint16_t rclass_net   = htons(rr->rclass);
+        __uint32_t ttl_net      = htonl(rr->ttl);
+        __uint16_t rdlength_net = htons(rr->rdlength);
+        memcpy(raw_data + cursor, &type_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &rclass_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, &ttl_net, sizeof(__uint32_t));
+        cursor += sizeof(__uint32_t);
+        memcpy(raw_data + cursor, &rdlength_net, sizeof(__uint16_t));
+        cursor += sizeof(__uint16_t);
+        memcpy(raw_data + cursor, rr->rdata, rr->rdlength);
+        cursor += rr->rdlength;
+    }
+
+    return raw_data;
+}

@@ -20,6 +20,7 @@ int main() {
     char buffer[4096];
 
     int sock = udp_server_socket(8080, 1024, "127.0.0.1");
+
     if (sock < 0)
         log_fatal("Failed to create UDP server socket\n");
 
@@ -27,7 +28,8 @@ int main() {
     if (!nrf)
         log_fatal("Failed to parse named.root file\n");
 
-    int balancer_type, balancer_state = RANDOM_BALANCER, state;
+    int balancer_type = ALWAYS_FIRST_BALANCER, balancer_state = 0;
+
 
     root_hint root_server;
 
@@ -48,11 +50,8 @@ int main() {
             if (message) {
                 log_info("Parsed DNS message with ID: %u\n", message->header.id);
 
-                root_server = get_root_server(nrf, balancer_type, &balancer_state);
-                log_info("Selected root server: %s\n", root_server.ns);
-
-                // TODO
-                // send request to root server and get response
+                // i need to make a pending messages logic to know which request is for which
+                // response
 
                 free(message);
             } else {
